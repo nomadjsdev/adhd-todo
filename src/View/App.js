@@ -60,7 +60,6 @@ const App = () => {
 
 	return (
 		<React.Fragment>
-			<h1>App</h1>
 			{frames &&
 				frames.map((frame, index) => (
 					<Frame key={`frame-${index}`} data={frame}>

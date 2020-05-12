@@ -1,19 +1,27 @@
 import React from 'react'
 
+import {
+	FrameContainer,
+	TitleContainer,
+	Title,
+	TimeSpan,
+	TasksContainer,
+} from './Frames.styles'
+
 const Frame = ({ data, children }) => {
 	const { title, timeStart, timeEnd } = data
 
 	return (
-		<div>
-			<div>
-				<h2>{title}</h2>
-				<span>
+		<FrameContainer>
+			<TitleContainer>
+				<Title>{title}</Title>
+				<TimeSpan>
 					({timeStart}
 					{timeEnd && ` - ${timeEnd}`})
-				</span>
-			</div>
-			<React.Fragment>{children}</React.Fragment>
-		</div>
+				</TimeSpan>
+			</TitleContainer>
+			<TasksContainer>{children}</TasksContainer>
+		</FrameContainer>
 	)
 }
 
