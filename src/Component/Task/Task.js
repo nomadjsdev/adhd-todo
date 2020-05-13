@@ -1,13 +1,41 @@
 import React from 'react'
 
-import { TaskContainer, Title } from './Task.styles'
+import {
+	TaskContainer,
+	TitleContainer,
+	Complete,
+	Title,
+	ControlContainer,
+	EditButton,
+	DeleteButton,
+} from './Task.styles'
 
-const Task = ({ data }) => {
-	const { title } = data
+const Task = ({ data, functions }) => {
+	const { id, title, complete } = data
+	const { handleMarkComplete, handleEdit, handleDelete } = functions
 
 	return (
 		<TaskContainer>
-			<Title>{title}</Title>
+			<TitleContainer
+				onClick={() => {
+					handleMarkComplete(id, !complete)
+				}}
+			>
+				<Complete complete={complete} />
+				<Title complete={complete}>{title}</Title>
+			</TitleContainer>
+			<ControlContainer>
+				<EditButton
+					onClick={() => {
+						handleEdit(id)
+					}}
+				/>
+				<DeleteButton
+					onClick={() => {
+						handleDelete(id)
+					}}
+				/>
+			</ControlContainer>
 		</TaskContainer>
 	)
 }

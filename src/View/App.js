@@ -58,15 +58,59 @@ const App = () => {
 			})
 	}, [useDefault])
 
+	const handleAddTask = async ({ title, frame }) => {
+		const task = { title, frame, complete: false }
+		db.table('tasks')
+			.put(task)
+			.then(() => {
+				setTasks((prevTasks) => [...prevTasks, task])
+			})
+	}
+
+	const handleMarkComplete = async (id, complete) => {
+		db.table('tasks')
+			.update(id, { complete })
+			.then(() => {
+				const newList = tasks.map((task) => {
+					if (task.id === id) {
+						task.complete = complete
+					}
+					return task
+				})
+				setTasks(newList)
+			})
+	}
+
+	const handleEdit = async (id) => {
+		console.log(`Editing task ${id}`)
+	}
+
+	const handleDelete = async (id) => {
+		db.table('tasks')
+			.delete(id)
+			.then(() => {
+				const newList = tasks.filter((task) => task.id !== id)
+				setTasks(newList)
+			})
+	}
+
 	return (
 		<React.Fragment>
 			{frames &&
 				frames.map((frame, index) => (
-					<Frame key={`frame-${index}`} data={frame}>
+					<Frame
+						key={`frame-${index}`}
+						data={frame}
+						functions={{ handleAddTask }}
+					>
 						{tasks
 							.filter((task) => task.frame === frame.id)
 							.map((task, index) => (
-								<Task key={`task-${index}`} data={task} />
+								<Task
+									key={`task-${index}`}
+									data={task}
+									functions={{ handleMarkComplete, handleEdit, handleDelete }}
+								/>
 							))}
 					</Frame>
 				))}

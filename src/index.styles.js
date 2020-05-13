@@ -12,5 +12,6 @@ body {
   margin: 8px;
   padding: 20px 10px;
   border-radius: 5px;
+  font-family: sans-serif;
 }
 `
