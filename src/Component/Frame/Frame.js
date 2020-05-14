@@ -26,7 +26,7 @@ const Frame = ({ data, functions, children }) => {
 				</TextContainer>
 				<AddTaskButton
 					onClick={() => {
-						handleAddTask({ title: 'Test', frame: id })
+						handleAddTask({ frame: id })
 					}}
 				/>
 			</TitleContainer>

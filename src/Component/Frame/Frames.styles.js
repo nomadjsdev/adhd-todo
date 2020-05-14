@@ -1,8 +1,10 @@
 import styled from 'styled-components'
 
+import Colors from 'Styles/Colors'
+
 export const FrameContainer = styled.div`
 	margin-bottom: 20px;
-	border: 1px solid black;
+	border: 1px solid ${Colors.black};
 	border-radius: 5px;
 `
 
@@ -10,7 +12,7 @@ export const TitleContainer = styled.div`
 	display: flex;
 	justify-content: space-between;
 	padding: 10px;
-	background-color: black;
+	background-color: ${Colors.black};
 `
 
 export const TextContainer = styled.div`
@@ -32,13 +34,13 @@ export const TasksContainer = styled.div`
 `
 
 export const AddTaskButton = styled.button`
-	background-color: hotpink;
+	background-color: ${Colors.highlight};
 	height: 40px;
 	width: 40px;
 	border: 0;
 	border-radius: 50%;
 	font-size: 2rem;
-	color: white;
+	color: ${Colors.white};
 	&:after {
 		content: '+';
 	}

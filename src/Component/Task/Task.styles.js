@@ -1,5 +1,16 @@
 import styled from 'styled-components'
 
+import Colors from 'Styles/Colors'
+
+const Button = styled.button`
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	border-style: solid;
+	color: ${Colors.white};
+	font-size: 1.5rem;
+`
+
 export const TaskContainer = styled.div`
 	display: flex;
 	justify-content: space-between;
@@ -9,55 +20,78 @@ export const TaskContainer = styled.div`
 export const TitleContainer = styled.div`
 	display: flex;
 	align-items: center;
+	width: 100%;
 `
 
-export const Complete = styled.button`
-	width: 40px;
-	height: 40px;
-	border-radius: 50%;
-	border: 2px solid hotpink;
-	border-style: solid;
-	background-color: ${(props) => (props.complete ? 'hotpink' : 'grey')};
-	color: white;
-	font-size: 1.5rem;
+export const Complete = styled(Button)`
+	margin-right: 10px;
+	border: 2px solid ${Colors.highlight};
+	background-color: ${(props) =>
+		props.complete ? Colors.highlight : Colors.grey};
 	${(props) => (props.complete ? '&:after {content: "✓";}' : '')};
 `
 
 export const Title = styled.p`
+	width: 100%;
 	font-size: 1.5rem;
 	padding: 5px;
 	text-decoration: ${(props) => (props.complete ? 'line-through' : 'none')};
 `
+
+export const EditTitle = styled.input.attrs({ type: 'text' })`
+	background-color: ${Colors.grey};
+	color: ${Colors.white};
+	border: none;
+	border-bottom: 2px solid ${Colors.white};
+	width: 100%;
+	margin: 0 20px 0 5px;
+	padding-left: 3px;
+	font-size: 1.5rem;
+
+	&:focus {
+		outline: none;
+	}
+`
+
 export const ControlContainer = styled.div`
 	display: flex;
 	align-items: center;
 `
 
-export const EditButton = styled.button`
-	width: 40px;
-	height: 40px;
-	border-radius: 50%;
-	border: 2px solid #70a1d7;
-	border-style: solid;
-	background-color: #70a1d7;
-	color: white;
-	font-size: 1.5rem;
+export const EditButton = styled(Button)`
+	border: 2px solid ${Colors.info};
+	background-color: ${Colors.info};
 	transform: scale(-1, 1);
+
 	&:after {
 		content: '✎';
 	}
 `
 
-export const DeleteButton = styled.button`
-	width: 40px;
-	height: 40px;
+export const SaveButton = styled(Button)`
+	border: 2px solid ${Colors.success};
+	background-color: ${Colors.success};
+
+	&:after {
+		content: '✓';
+	}
+`
+
+export const CancelButton = styled(Button)`
 	margin-left: 10px;
-	border-radius: 50%;
-	border: 2px solid #f47c7c;
-	border-style: solid;
-	background-color: #f47c7c;
-	color: white;
-	font-size: 1.5rem;
+	border: 2px solid ${Colors.danger};
+	background-color: ${Colors.danger};
+
+	&:after {
+		content: '×';
+	}
+`
+
+export const DeleteButton = styled(Button)`
+	margin-left: 10px;
+	border: 2px solid ${Colors.danger};
+	background-color: ${Colors.danger};
+
 	&:after {
 		content: '🗑';
 	}

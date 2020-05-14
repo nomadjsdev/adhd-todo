@@ -6,18 +6,18 @@ import Frame from 'Component/Frame'
 import Task from 'Component/Task'
 
 const defaultFrames = [
-	{ title: 'First thing', timeStart: '0700', timeEnd: null },
-	{ title: 'Morning', timeStart: '0800', timeEnd: '1300' },
-	{ title: 'Afternoon', timeStart: '1300', timeEnd: '1800' },
-	{ title: 'Evening', timeStart: '1800', timeEnd: '2300' },
-	{ title: 'Last thing', timeStart: '2400', timeEnd: null },
+	{ id: 1, title: 'First thing', timeStart: '0700', timeEnd: null },
+	{ id: 2, title: 'Morning', timeStart: '0800', timeEnd: '1300' },
+	{ id: 3, title: 'Afternoon', timeStart: '1300', timeEnd: '1800' },
+	{ id: 4, title: 'Evening', timeStart: '1800', timeEnd: '2300' },
+	{ id: 5, title: 'Last thing', timeStart: '2400', timeEnd: null },
 ]
 
 const defaultTasks = [
-	{ title: 'Stretch', frame: 1, complete: false },
-	{ title: 'Shower', frame: 1, complete: false },
-	{ title: 'Breakfast', frame: 2, complete: false },
-	{ title: 'Take medication', frame: 2, complete: false },
+	{ id: 1, title: 'Stretch', frame: 1, complete: false },
+	{ id: 2, title: 'Shower', frame: 1, complete: false },
+	{ id: 3, title: 'Breakfast', frame: 2, complete: false },
+	{ id: 4, title: 'Take medication', frame: 2, complete: false },
 ]
 
 const App = () => {
@@ -31,10 +31,11 @@ const App = () => {
 				if (frames.length === 0) {
 					setUseDefault(true)
 					// If there are no frames in the DB, use default data
-					for (const frame in defaultFrames) {
-						db.table('frames').add(defaultFrames[frame])
-						setFrames((prevFrames) => [...prevFrames, defaultFrames[frame]])
-					}
+					db.table('frames')
+						.bulkAdd(defaultFrames)
+						.then(() => {
+							setFrames(defaultFrames)
+						})
 				} else {
 					setFrames(frames)
 				}
@@ -43,31 +44,38 @@ const App = () => {
 
 	const [tasks, setTasks] = React.useState([])
 	React.useEffect(() => {
-		db.table('tasks')
-			.toArray()
-			.then((tasks) => {
-				if (tasks.length === 0 && useDefault) {
-					// If there are no tasks in the DB and Frames were populated from defaults, use default data for tasks
-					for (const task in defaultTasks) {
-						db.table('tasks').add(defaultTasks[task])
-						setTasks((prevTasks) => [...prevTasks, defaultTasks[task]])
+		if (frames.length > 0) {
+			db.table('tasks')
+				.toArray()
+				.then((tasks) => {
+					if (tasks.length === 0 && useDefault) {
+						// If there are no tasks in the DB and Frames were populated from defaults, use default data for tasks
+						db.table('tasks')
+							.bulkAdd(defaultTasks)
+							.then(() => {
+								setTasks(defaultTasks)
+							})
+					} else {
+						setTasks(tasks)
 					}
-				} else {
-					setTasks(tasks)
-				}
-			})
-	}, [useDefault])
+				})
+		}
+	}, [frames, useDefault])
 
-	const handleAddTask = async ({ title, frame }) => {
-		const task = { title, frame, complete: false }
+	const [editingId, setEditingId] = React.useState(null)
+
+	const handleAddTask = async ({ frame }) => {
+		const task = { title: 'New task...', frame, complete: false }
+
 		db.table('tasks')
 			.put(task)
 			.then(() => {
 				setTasks((prevTasks) => [...prevTasks, task])
+				setEditingId(task.id)
 			})
 	}
 
-	const handleMarkComplete = async (id, complete) => {
+	const handleMarkComplete = async ({ id, complete }) => {
 		db.table('tasks')
 			.update(id, { complete })
 			.then(() => {
@@ -81,11 +89,26 @@ const App = () => {
 			})
 	}
 
-	const handleEdit = async (id) => {
-		console.log(`Editing task ${id}`)
+	const handleEditTask = async ({ id, title }) => {
+		const taskToEdit = tasks.find((task) => task.id === id)
+
+		if (taskToEdit.title !== title) {
+			db.table('tasks')
+				.update(id, { title })
+				.then(() => {
+					const newList = tasks.map((task) => {
+						if (task.id === id) {
+							task.title = title
+						}
+						return task
+					})
+					setTasks(newList)
+					setEditingId(null)
+				})
+		}
 	}
 
-	const handleDelete = async (id) => {
+	const handleDelete = async ({ id }) => {
 		db.table('tasks')
 			.delete(id)
 			.then(() => {
@@ -109,7 +132,13 @@ const App = () => {
 								<Task
 									key={`task-${index}`}
 									data={task}
-									functions={{ handleMarkComplete, handleEdit, handleDelete }}
+									functions={{
+										setEditingId,
+										handleMarkComplete,
+										handleEditTask,
+										handleDelete,
+									}}
+									editing={editingId === task.id}
 								/>
 							))}
 					</Frame>
