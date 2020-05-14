@@ -5,62 +5,24 @@ import db from 'Db'
 import Frame from 'Component/Frame'
 import Task from 'Component/Task'
 
-const defaultFrames = [
-	{ id: 1, title: 'First thing', timeStart: '0700', timeEnd: null },
-	{ id: 2, title: 'Morning', timeStart: '0800', timeEnd: '1300' },
-	{ id: 3, title: 'Afternoon', timeStart: '1300', timeEnd: '1800' },
-	{ id: 4, title: 'Evening', timeStart: '1800', timeEnd: '2300' },
-	{ id: 5, title: 'Last thing', timeStart: '2400', timeEnd: null },
-]
-
-const defaultTasks = [
-	{ id: 1, title: 'Stretch', frame: 1, complete: false },
-	{ id: 2, title: 'Shower', frame: 1, complete: false },
-	{ id: 3, title: 'Breakfast', frame: 2, complete: false },
-	{ id: 4, title: 'Take medication', frame: 2, complete: false },
-]
-
 const App = () => {
-	const [useDefault, setUseDefault] = React.useState(false)
-
 	const [frames, setFrames] = React.useState([])
 	React.useEffect(() => {
 		db.table('frames')
 			.toArray()
 			.then((frames) => {
-				if (frames.length === 0) {
-					setUseDefault(true)
-					// If there are no frames in the DB, use default data
-					db.table('frames')
-						.bulkAdd(defaultFrames)
-						.then(() => {
-							setFrames(defaultFrames)
-						})
-				} else {
-					setFrames(frames)
-				}
+				setFrames(frames)
 			})
 	}, [])
 
 	const [tasks, setTasks] = React.useState([])
 	React.useEffect(() => {
-		if (frames.length > 0) {
-			db.table('tasks')
-				.toArray()
-				.then((tasks) => {
-					if (tasks.length === 0 && useDefault) {
-						// If there are no tasks in the DB and Frames were populated from defaults, use default data for tasks
-						db.table('tasks')
-							.bulkAdd(defaultTasks)
-							.then(() => {
-								setTasks(defaultTasks)
-							})
-					} else {
-						setTasks(tasks)
-					}
-				})
-		}
-	}, [frames, useDefault])
+		db.table('tasks')
+			.toArray()
+			.then((tasks) => {
+				setTasks(tasks)
+			})
+	}, [])
 
 	const [editingId, setEditingId] = React.useState(null)
 
