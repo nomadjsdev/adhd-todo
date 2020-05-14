@@ -15,6 +15,7 @@ export const TaskContainer = styled.div`
 	display: flex;
 	justify-content: space-between;
 	margin: 10px 0;
+	cursor: default;
 `
 
 export const TitleContainer = styled.div`
