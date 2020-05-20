@@ -5,7 +5,7 @@ const DATABASE_VERSION = 1
 const defaultSchema = {
 	config: '',
 	frames: '++id',
-	tasks: '++id',
+	tasks: '++id, frame',
 }
 
 const defaultFrames = [

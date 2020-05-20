@@ -1,95 +1,110 @@
 import React from 'react'
 
 import {
+	SaveButton,
+	CancelButton,
+	EditButton,
+	DeleteButton,
+} from 'Styles/Components'
+import {
 	TaskContainer,
 	TitleContainer,
 	Complete,
+	Duplicate,
 	Title,
 	EditTitle,
 	ControlContainer,
-	EditButton,
-	SaveButton,
-	CancelButton,
-	DeleteButton,
 } from './Task.styles'
 
 const Task = ({ data, functions, editing }) => {
-	const { id, title, complete } = data
+	const { id, title, frame, complete } = data
 	const {
-		setEditingId,
-		handleMarkComplete,
+		handleAddTask,
+		setEditingTaskId,
 		handleEditTask,
-		handleDelete,
+		handleDeleteTask,
 	} = functions
+	const { editingTask, editingFrames } = editing
 
 	const [value, setValue] = React.useState(title)
 
 	const inputRef = React.useRef()
 	React.useEffect(() => {
-		if (editing) {
+		if (editingTask) {
 			inputRef.current.focus()
 		}
-	}, [editing])
+	}, [editingTask])
 
 	return (
 		<TaskContainer>
 			<TitleContainer>
-				<Complete
-					complete={complete}
-					onClick={() => {
-						handleMarkComplete({ id, complete: !complete })
-					}}
-				/>
-				{!editing && (
-					<Title
-						complete={complete}
-						onClick={() => {
-							handleMarkComplete({ id, complete: !complete })
-						}}
-					>
-						{title}
-					</Title>
+				{!editingTask && (
+					<React.Fragment>
+						<Complete
+							complete={complete}
+							onClick={() => {
+								handleEditTask({ id, complete: !complete })
+							}}
+						/>
+						<Title
+							complete={complete}
+							onClick={() => {
+								handleEditTask({ id, complete: !complete })
+							}}
+						>
+							{title}
+						</Title>
+					</React.Fragment>
 				)}
-				{editing && (
-					<EditTitle
-						ref={inputRef}
-						value={value}
-						onChange={(e) => setValue(e.target.value)}
-					/>
+				{editingTask && (
+					<React.Fragment>
+						<Duplicate
+							onClick={() => {
+								handleAddTask({ title, frame, complete })
+							}}
+						/>
+						<EditTitle
+							ref={inputRef}
+							value={value}
+							onChange={(e) => setValue(e.target.value)}
+						/>
+					</React.Fragment>
 				)}
 			</TitleContainer>
-			<ControlContainer>
-				{!editing && (
-					<React.Fragment>
-						<EditButton
-							onClick={() => {
-								setEditingId(id)
-							}}
-							disabled={complete}
-						/>
-						<DeleteButton
-							onClick={() => {
-								handleDelete({ id })
-							}}
-						/>
-					</React.Fragment>
-				)}
-				{editing && (
-					<React.Fragment>
-						<SaveButton
-							onClick={() => {
-								handleEditTask({ id, title: value })
-							}}
-						/>
-						<CancelButton
-							onClick={() => {
-								setValue(title)
-								setEditingId(null)
-							}}
-						/>
-					</React.Fragment>
-				)}
-			</ControlContainer>
+			{!editingFrames && (
+				<ControlContainer>
+					{!editingTask && (
+						<React.Fragment>
+							<EditButton
+								onClick={() => {
+									setEditingTaskId(id)
+								}}
+								disabled={complete}
+							/>
+							<DeleteButton
+								onClick={() => {
+									handleDeleteTask({ id })
+								}}
+							/>
+						</React.Fragment>
+					)}
+					{editingTask && (
+						<React.Fragment>
+							<SaveButton
+								onClick={() => {
+									handleEditTask({ id, title: value })
+								}}
+							/>
+							<CancelButton
+								onClick={() => {
+									setValue(title)
+									setEditingTaskId(null)
+								}}
+							/>
+						</React.Fragment>
+					)}
+				</ControlContainer>
+			)}
 		</TaskContainer>
 	)
 }
