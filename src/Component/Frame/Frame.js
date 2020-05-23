@@ -1,6 +1,7 @@
 import React from 'react'
 
 import {
+	AddButton,
 	SaveButton,
 	CancelButton,
 	EditButton,
@@ -17,7 +18,6 @@ import {
 	EditTime,
 	ButtonContainer,
 	TasksContainer,
-	AddButton,
 } from './Frames.styles'
 
 const Frame = ({ data, functions, editing, children }) => {

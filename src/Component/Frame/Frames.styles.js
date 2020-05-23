@@ -1,7 +1,6 @@
 import styled from 'styled-components'
 
 import Colors from 'Styles/Colors'
-import { Button } from 'Styles/Components'
 
 export const FrameContainer = styled.div`
 	margin-bottom: 20px;
@@ -60,16 +59,6 @@ export const ButtonContainer = styled.div`
 	display: flex;
 	justify-content: flex-end;
 	width: 92px;
-`
-
-export const AddButton = styled(Button)`
-	border: 2px solid ${Colors.highlight};
-	background-color: ${Colors.highlight};
-	font-size: 1.9rem;
-
-	&:after {
-		content: '+';
-	}
 `
 
 export const TasksContainer = styled.div`

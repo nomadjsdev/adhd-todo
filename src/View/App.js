@@ -5,7 +5,8 @@ import db from 'Db'
 import Frame from 'Component/Frame'
 import Task from 'Component/Task'
 
-import { EditFramesButton } from './App.styles'
+import { AddButton } from 'Styles/Components'
+import { Header, EditFramesButton } from './App.styles'
 
 const replaceInArrayByIndex = (array, index, data) => [
 	...array.slice(0, index),
@@ -144,13 +145,22 @@ const App = () => {
 
 	return (
 		<React.Fragment>
-			<EditFramesButton
-				onClick={() => {
-					setEditingFrames(!editingFrames)
-				}}
-			>
-				{editingFrames ? 'Stop editing' : 'Edit frames'}
-			</EditFramesButton>
+			<Header>
+				<EditFramesButton
+					onClick={() => {
+						setEditingFrames(!editingFrames)
+					}}
+				>
+					{editingFrames ? 'Stop editing' : 'Edit frames'}
+				</EditFramesButton>
+				{editingFrames && (
+					<AddButton
+						onClick={() => {
+							handleAddFrame()
+						}}
+					/>
+				)}
+			</Header>
 			{frames &&
 				frames.map((frame, index) => (
 					<Frame

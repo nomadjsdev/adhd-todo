@@ -12,6 +12,20 @@ export const Button = styled.button`
 	margin-left: 10px;
 `
 
+export const AddButton = styled(Button)`
+	border: 2px solid ${Colors.highlight};
+	background-color: ${Colors.highlight};
+	font-size: 1.9rem;
+	position: relative;
+
+	&:after {
+		position: absolute;
+		top: 0;
+		left: 7px;
+		content: '+';
+	}
+`
+
 export const SaveButton = styled(Button)`
 	border: 2px solid ${Colors.success};
 	background-color: ${Colors.success};
