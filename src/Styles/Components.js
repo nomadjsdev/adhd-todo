@@ -10,6 +10,13 @@ export const Button = styled.button`
 	color: ${Colors.white};
 	font-size: 1.4rem;
 	margin-left: 10px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	&:after {
+		position: absolute;
+	}
 `
 
 export const AddButton = styled(Button)`
@@ -19,9 +26,6 @@ export const AddButton = styled(Button)`
 	position: relative;
 
 	&:after {
-		position: absolute;
-		top: 0;
-		left: 7px;
 		content: '+';
 	}
 `
@@ -61,5 +65,20 @@ export const DeleteButton = styled(Button)`
 
 	&:after {
 		content: '🗑';
+	}
+`
+
+export const MoveHandle = styled.div`
+	width: 36px;
+	height: 36px;
+	border-radius: 5px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: ${Colors.info};
+	margin-right: 10px;
+
+	&:after {
+		content: '☰';
 	}
 `

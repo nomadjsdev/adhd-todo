@@ -4,16 +4,29 @@ const DATABASE_VERSION = 1
 
 const defaultSchema = {
 	config: '',
-	frames: '++id',
-	tasks: '++id, frame',
+	frames: '++id, position',
+	tasks: '++id, frame, position',
+	taskOrder: '++id, frame',
 }
 
 const defaultFrames = [
-	{ id: 1, title: 'First thing', timeStart: '0700', timeEnd: null },
-	{ id: 2, title: 'Morning', timeStart: '0800', timeEnd: '1300' },
-	{ id: 3, title: 'Afternoon', timeStart: '1300', timeEnd: '1800' },
-	{ id: 4, title: 'Evening', timeStart: '1800', timeEnd: '2300' },
-	{ id: 5, title: 'Last thing', timeStart: '2400', timeEnd: null },
+	{
+		id: 1,
+		title: 'First thing',
+		timeStart: '0700',
+		timeEnd: null,
+		position: 1,
+	},
+	{ id: 2, title: 'Morning', timeStart: '0800', timeEnd: '1300', position: 2 },
+	{
+		id: 3,
+		title: 'Afternoon',
+		timeStart: '1300',
+		timeEnd: '1800',
+		position: 3,
+	},
+	{ id: 4, title: 'Evening', timeStart: '1800', timeEnd: '2300', position: 4 },
+	{ id: 5, title: 'Last thing', timeStart: '2400', timeEnd: null, position: 5 },
 ]
 
 const defaultTasks = [
@@ -21,6 +34,14 @@ const defaultTasks = [
 	{ id: 2, title: 'Shower', frame: 1, complete: false },
 	{ id: 3, title: 'Breakfast', frame: 2, complete: false },
 	{ id: 4, title: 'Take medication', frame: 2, complete: false },
+]
+
+const defaultTaskOrder = [
+	{ id: 1, frame: 1, order: [1, 2] },
+	{ id: 2, frame: 2, order: [3, 4] },
+	{ id: 3, frame: 3, order: [] },
+	{ id: 4, frame: 4, order: [] },
+	{ id: 5, frame: 5, order: [] },
 ]
 
 const currentDate = new Date(Date.now()).getDate()
@@ -35,6 +56,7 @@ db.on('populate', () => {
 	db.table('config').add(defaultDateTime, 1)
 	db.table('frames').bulkAdd(defaultFrames)
 	db.table('tasks').bulkAdd(defaultTasks)
+	db.table('taskOrder').bulkAdd(defaultTaskOrder)
 })
 
 // When the database is open, check current date with stored date

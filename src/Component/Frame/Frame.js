@@ -1,4 +1,5 @@
 import React from 'react'
+import { Draggable } from 'react-beautiful-dnd'
 
 import {
 	AddButton,
@@ -6,6 +7,7 @@ import {
 	CancelButton,
 	EditButton,
 	DeleteButton,
+	MoveHandle,
 } from 'Styles/Components'
 import {
 	FrameContainer,
@@ -20,7 +22,7 @@ import {
 	TasksContainer,
 } from './Frames.styles'
 
-const Frame = ({ data, functions, editing, children }) => {
+const Frame = ({ index, data, functions, editing, children }) => {
 	const { id, title, timeStart, timeEnd } = data
 	const {
 		handleAddTask,
@@ -42,81 +44,89 @@ const Frame = ({ data, functions, editing, children }) => {
 	}, [editingFrame])
 
 	return (
-		<FrameContainer>
-			<TitleContainer>
-				<TextContainer>
-					{!editingFrame && <Title>{title}</Title>}
-					{editingFrame && (
-						<EditTitle
-							ref={inputRef}
-							value={editTitle}
-							onChange={(e) => setEditTitle(e.target.value)}
+		<Draggable draggableId={`frame-${id.toString()}`} index={index}>
+			{(provided) => (
+				<FrameContainer ref={provided.innerRef} {...provided.draggableProps}>
+					<TitleContainer>
+						<MoveHandle
+							{...provided.dragHandleProps}
+							style={{ display: editingFrames ? 'flex' : 'none' }}
 						/>
-					)}
-					{!editingFrame && (
-						<TimeSpan>
-							{timeStart}
-							{timeEnd && ` - ${timeEnd}`}
-						</TimeSpan>
-					)}
-					{editingFrame && (
-						<EditTimeSpan>
-							<EditTime
-								value={editTimeStart}
-								onChange={(e) => setEditTimeStart(e.target.value)}
-							/>
-							<EditTime
-								value={editTimeEnd}
-								onChange={(e) => setEditTimeEnd(e.target.value)}
-							/>
-						</EditTimeSpan>
-					)}
-				</TextContainer>
-				<ButtonContainer>
-					{!editingFrames && (
-						<AddButton
-							onClick={() => {
-								handleAddTask({ frame: id })
-							}}
-						/>
-					)}
-					{editingFrames && !editingFrame && (
-						<React.Fragment>
-							<EditButton
-								onClick={() => {
-									setEditingFrameId(id)
-								}}
-							/>
-							<DeleteButton
-								onClick={() => {
-									handleDeleteFrame({ id })
-								}}
-							/>
-						</React.Fragment>
-					)}
-					{editingFrames && editingFrame && (
-						<React.Fragment>
-							<SaveButton
-								onClick={() => {
-									handleEditFrame({
-										id,
-										title: editTitle,
-										timeStart: editTimeStart,
-										timeEnd: editTimeEnd,
-									})
-								}}
-							/>
-							<CancelButton
-								onClick={() => {
-									setEditingFrameId(null)
-								}}
-							/>
-						</React.Fragment>
-					)}
-				</ButtonContainer>
-			</TitleContainer>
-			<TasksContainer>{children}</TasksContainer>
-		</FrameContainer>
+						<TextContainer>
+							{!editingFrame && <Title>{title}</Title>}
+							{editingFrame && (
+								<EditTitle
+									ref={inputRef}
+									value={editTitle}
+									onChange={(e) => setEditTitle(e.target.value)}
+								/>
+							)}
+							{!editingFrame && (
+								<TimeSpan>
+									{timeStart}
+									{timeEnd && ` - ${timeEnd}`}
+								</TimeSpan>
+							)}
+							{editingFrame && (
+								<EditTimeSpan>
+									<EditTime
+										value={editTimeStart}
+										onChange={(e) => setEditTimeStart(e.target.value)}
+									/>
+									<EditTime
+										value={editTimeEnd}
+										onChange={(e) => setEditTimeEnd(e.target.value)}
+									/>
+								</EditTimeSpan>
+							)}
+						</TextContainer>
+						<ButtonContainer>
+							{!editingFrames && (
+								<AddButton
+									onClick={() => {
+										handleAddTask({ frame: id })
+									}}
+								/>
+							)}
+							{editingFrames && !editingFrame && (
+								<React.Fragment>
+									<EditButton
+										onClick={() => {
+											setEditingFrameId(id)
+										}}
+									/>
+									<DeleteButton
+										onClick={() => {
+											handleDeleteFrame({ id })
+										}}
+									/>
+								</React.Fragment>
+							)}
+							{editingFrames && editingFrame && (
+								<React.Fragment>
+									<SaveButton
+										onClick={() => {
+											handleEditFrame({
+												id,
+												title: editTitle,
+												timeStart: editTimeStart,
+												timeEnd: editTimeEnd,
+											})
+										}}
+									/>
+									<CancelButton
+										onClick={() => {
+											setEditingFrameId(null)
+										}}
+									/>
+								</React.Fragment>
+							)}
+						</ButtonContainer>
+					</TitleContainer>
+					<TasksContainer>{children}</TasksContainer>
+				</FrameContainer>
+			)}
+		</Draggable>
 	)
 }
 

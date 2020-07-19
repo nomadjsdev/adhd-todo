@@ -1,4 +1,5 @@
 import React from 'react'
+import { Draggable } from 'react-beautiful-dnd'
 
 import {
 	SaveButton,
@@ -16,7 +17,7 @@ import {
 	ControlContainer,
 } from './Task.styles'
 
-const Task = ({ data, functions, editing }) => {
+const Task = ({ index, data, functions, editing }) => {
 	const { id, title, frame, complete } = data
 	const {
 		handleAddTask,
@@ -36,76 +37,84 @@ const Task = ({ data, functions, editing }) => {
 	}, [editingTask])
 
 	return (
-		<TaskContainer>
-			<TitleContainer>
-				{!editingTask && (
-					<React.Fragment>
-						<Complete
-							complete={complete}
-							onClick={() => {
-								handleEditTask({ id, complete: !complete })
-							}}
-						/>
-						<Title
-							complete={complete}
-							onClick={() => {
-								handleEditTask({ id, complete: !complete })
-							}}
-						>
-							{title}
-						</Title>
-					</React.Fragment>
-				)}
-				{editingTask && (
-					<React.Fragment>
-						<Duplicate
-							onClick={() => {
-								handleAddTask({ title, frame, complete })
-							}}
-						/>
-						<EditTitle
-							ref={inputRef}
-							value={value}
-							onChange={(e) => setValue(e.target.value)}
-						/>
-					</React.Fragment>
-				)}
-			</TitleContainer>
-			{!editingFrames && (
-				<ControlContainer>
-					{!editingTask && (
-						<React.Fragment>
-							<EditButton
-								onClick={() => {
-									setEditingTaskId(id)
-								}}
-								disabled={complete}
-							/>
-							<DeleteButton
-								onClick={() => {
-									handleDeleteTask({ id })
-								}}
-							/>
-						</React.Fragment>
+		<Draggable draggableId={`task-${id.toString()}`} index={index}>
+			{(provided) => (
+				<TaskContainer
+					ref={provided.innerRef}
+					{...provided.draggableProps}
+					{...provided.dragHandleProps}
+				>
+					<TitleContainer>
+						{!editingTask && (
+							<React.Fragment>
+								<Complete
+									complete={complete}
+									onClick={() => {
+										handleEditTask({ id, complete: !complete })
+									}}
+								/>
+								<Title
+									complete={complete}
+									onClick={() => {
+										handleEditTask({ id, complete: !complete })
+									}}
+								>
+									{title}
+								</Title>
+							</React.Fragment>
+						)}
+						{editingTask && (
+							<React.Fragment>
+								<Duplicate
+									onClick={() => {
+										handleAddTask({ title, frame, complete })
+									}}
+								/>
+								<EditTitle
+									ref={inputRef}
+									value={value}
+									onChange={(e) => setValue(e.target.value)}
+								/>
+							</React.Fragment>
+						)}
+					</TitleContainer>
+					{!editingFrames && (
+						<ControlContainer>
+							{!editingTask && (
+								<React.Fragment>
+									<EditButton
+										onClick={() => {
+											setEditingTaskId(id)
+										}}
+										disabled={complete}
+									/>
+									<DeleteButton
+										onClick={() => {
+											handleDeleteTask({ id })
+										}}
+									/>
+								</React.Fragment>
+							)}
+							{editingTask && (
+								<React.Fragment>
+									<SaveButton
+										onClick={() => {
+											handleEditTask({ id, title: value })
+										}}
+									/>
+									<CancelButton
+										onClick={() => {
+											setValue(title)
+											setEditingTaskId(null)
+										}}
+									/>
+								</React.Fragment>
+							)}
+						</ControlContainer>
 					)}
-					{editingTask && (
-						<React.Fragment>
-							<SaveButton
-								onClick={() => {
-									handleEditTask({ id, title: value })
-								}}
-							/>
-							<CancelButton
-								onClick={() => {
-									setValue(title)
-									setEditingTaskId(null)
-								}}
-							/>
-						</React.Fragment>
-					)}
-				</ControlContainer>
+				</TaskContainer>
 			)}
-		</TaskContainer>
+		</Draggable>
 	)
 }
 
