@@ -58,7 +58,9 @@ const App = () => {
 	const [editingTaskId, setEditingTaskId] = React.useState(null)
 
 	React.useEffect(() => {
-		if (!editingFrames) setEditingFrameId(null)
+		if (!editingFrames) {
+			setEditingFrameId(null)
+		}
 	}, [editingFrames])
 
 	const handleAddFrame = () => {
@@ -85,16 +87,21 @@ const App = () => {
 			})
 	}
 
-	const handleEditFrame = (data) => {
-		const frameToEdit = frames.find((frame) => frame.id === data.id)
-		const {
-			id,
-			title = frameToEdit.title,
-			timeStart = frameToEdit.timeStart,
-			timeEnd = frameToEdit.timeEnd,
-		} = data
+	const handleEditFrame = ({ id, title, timeStart, timeEnd }) => {
+		const frameToEdit = frames.find((frame) => frame.id === id)
 
-		// TODO: if no changes, do not update database or state
+		if (
+			frameToEdit.title === title &&
+			frameToEdit.timeStart === timeStart &&
+			frameToEdit.timeEnd === timeEnd
+		) {
+			setEditingFrameId(null)
+			return
+		}
+
+		if (!title) {
+			title = frameToEdit.title
+		}
 
 		db.table('frames')
 			.update(id, { title, timeStart, timeEnd })
@@ -163,16 +170,25 @@ const App = () => {
 			})
 	}
 
-	const handleEditTask = (data) => {
-		const taskToEdit = tasks.find((task) => task.id === data.id)
-		const {
-			id,
-			title = taskToEdit.title,
-			frame = taskToEdit.frame,
-			complete = taskToEdit.complete,
-		} = data
+	const handleEditTask = ({ id, title, frame, complete }) => {
+		const taskToEdit = tasks.find((task) => task.id === id)
 
-		// TODO: if no changes, do not update database or state
+		if (
+			taskToEdit.title === title &&
+			taskToEdit.frame === frame &&
+			taskToEdit.complete === complete
+		) {
+			setEditingTaskId(null)
+			return
+		}
+
+		if (!title) {
+			title = taskToEdit.title
+		}
+
+		if (!frame) {
+			frame = taskToEdit.frame
+		}
 
 		db.table('tasks')
 			.update(id, { title, frame, complete })

@@ -32,9 +32,9 @@ const Frame = ({ index, data, functions, editing, children }) => {
 	} = functions
 	const { editingFrames, editingFrame } = editing
 
-	const [editTitle, setEditTitle] = React.useState(title ?? '')
-	const [editTimeStart, setEditTimeStart] = React.useState(timeStart ?? '')
-	const [editTimeEnd, setEditTimeEnd] = React.useState(timeEnd ?? '')
+	const [editTitle, setEditTitle] = React.useState(title)
+	const [editTimeStart, setEditTimeStart] = React.useState(timeStart)
+	const [editTimeEnd, setEditTimeEnd] = React.useState(timeEnd)
 
 	const inputRef = React.useRef()
 	React.useEffect(() => {
@@ -105,6 +105,7 @@ const Frame = ({ index, data, functions, editing, children }) => {
 							{editingFrames && editingFrame && (
 								<React.Fragment>
 									<SaveButton
+										disabled={editTitle ? false : true}
 										onClick={() => {
 											handleEditFrame({
 												id,

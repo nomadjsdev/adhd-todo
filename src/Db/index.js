@@ -14,7 +14,7 @@ const defaultFrames = [
 		id: 1,
 		title: 'First thing',
 		timeStart: '0700',
-		timeEnd: null,
+		timeEnd: '',
 		position: 1,
 	},
 	{ id: 2, title: 'Morning', timeStart: '0800', timeEnd: '1300', position: 2 },
@@ -26,7 +26,7 @@ const defaultFrames = [
 		position: 3,
 	},
 	{ id: 4, title: 'Evening', timeStart: '1800', timeEnd: '2300', position: 4 },
-	{ id: 5, title: 'Last thing', timeStart: '2400', timeEnd: null, position: 5 },
+	{ id: 5, title: 'Last thing', timeStart: '2400', timeEnd: '', position: 5 },
 ]
 
 const defaultTasks = [

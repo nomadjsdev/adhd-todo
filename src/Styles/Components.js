@@ -17,6 +17,10 @@ export const Button = styled.button`
 	&:after {
 		position: absolute;
 	}
+
+	&:disabled {
+		opacity: 0.3;
+	}
 `
 
 export const AddButton = styled(Button)`

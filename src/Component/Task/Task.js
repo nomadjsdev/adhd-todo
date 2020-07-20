@@ -50,13 +50,13 @@ const Task = ({ index, data, functions, editing }) => {
 								<Complete
 									complete={complete}
 									onClick={() => {
-										handleEditTask({ id, complete: !complete })
+										handleEditTask({ id, title, frame, complete: !complete })
 									}}
 								/>
 								<Title
 									complete={complete}
 									onClick={() => {
-										handleEditTask({ id, complete: !complete })
+										handleEditTask({ id, title, frame, complete: !complete })
 									}}
 								>
 									{title}
@@ -98,8 +98,9 @@ const Task = ({ index, data, functions, editing }) => {
 							{editingTask && (
 								<React.Fragment>
 									<SaveButton
+										disabled={value ? false : true}
 										onClick={() => {
-											handleEditTask({ id, title: value })
+											handleEditTask({ id, title: value, frame, complete })
 										}}
 									/>
 									<CancelButton
