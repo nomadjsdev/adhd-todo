@@ -239,6 +239,7 @@ const App = () => {
 		}
 
 		if (event.type === 'FRAME') {
+			const oldFrameOrder = Array.from(frames)
 			const newFrameOrder = reorderArrayByIndex(
 				frames,
 				event.source.index,
@@ -257,7 +258,7 @@ const App = () => {
 			db.table('frames')
 				.bulkPut(updatedPositions)
 				.catch((error) => {
-					// If database update fails, TODO: revert state
+					setFrames(oldFrameOrder)
 					console.log(error)
 				})
 		}
@@ -275,6 +276,7 @@ const App = () => {
 				(entry) => entry.frame === destinationFrame,
 			)['order']
 
+			const oldOrderArray = Array.from(taskOrder)
 			let newOrderArray
 			if (sourceFrame === destinationFrame) {
 				const newTaskOrder = reorderArrayByIndex(
@@ -322,7 +324,7 @@ const App = () => {
 					db.table('tasks').update(id, { frame: destinationFrame })
 				})
 				.catch((error) => {
-					// If database update fails, TODO: revert state
+					setTaskOrder(oldOrderArray)
 					console.log(error)
 				})
 		}
