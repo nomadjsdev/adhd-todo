@@ -1,15 +1,15 @@
 import React from 'react'
 import { DragDropContext, Droppable } from 'react-beautiful-dnd'
 
-import { fetchFromDb, putInDb, updateDb, deleteFromDb } from 'Action/Db'
+import { fetchAll, putInDb, updateDb, deleteFromDb, reinitDb } from 'Action/Db'
 
 import Frame from 'Component/Frame'
 import Task from 'Component/Task'
 
-import { defaultNewFrame, defaultNewTask } from 'Constants'
+import { defaultNewFrame, defaultNewTask, actions } from 'Constants'
 
 import { AddButton } from 'Styles/Components'
-import { Header, EditFramesButton } from './App.styles'
+import { Header, EditFramesButton, Title } from './App.styles'
 
 const replaceInArrayByIndex = (array, index, data) => [
 	...array.slice(0, index),
@@ -26,39 +26,30 @@ const reorderArrayByIndex = (list, startIndex, endIndex) => {
 }
 
 const App = () => {
+	const [loading, setLoading] = React.useState(actions.db.LOADING)
 	const [frames, setFrames] = React.useState([])
-	React.useEffect(() => {
-		fetchFromDb({ table: 'frames', order: 'position' })
-			.then((response) => {
-				setFrames(response)
-			})
-			.catch((error) => {
-				console.log(error)
-			})
-	}, [])
-
 	const [tasks, setTasks] = React.useState([])
-	React.useEffect(() => {
-		fetchFromDb({ table: 'tasks' })
-			.then((response) => {
-				setTasks(response)
-			})
-
-			.catch((error) => {
-				console.log(error)
-			})
-	}, [])
-
 	const [taskOrder, setTaskOrder] = React.useState([])
+
 	React.useEffect(() => {
-		fetchFromDb({ table: 'taskOrder', order: 'frame' })
-			.then((response) => {
-				setTaskOrder(response)
-			})
-			.catch((error) => {
-				console.log(error)
-			})
-	}, [])
+		if (loading === actions.db.LOADING || loading === actions.db.RELOAD) {
+			fetchAll([
+				{ name: 'frames', order: 'position' },
+				{ name: 'tasks' },
+				{ name: 'taskOrder', order: '' },
+			])
+				.then((response) => {
+					setFrames(response.frames)
+					setTasks(response.tasks)
+					setTaskOrder(response.taskOrder)
+					setLoading(actions.db.LOADED)
+				})
+				.catch((error) => {
+					console.log(error)
+					setLoading(actions.db.ERROR)
+				})
+		}
+	}, [loading])
 
 	const [editingFrames, setEditingFrames] = React.useState(false)
 	const [editingFrameId, setEditingFrameId] = React.useState(null)
@@ -364,23 +355,56 @@ const App = () => {
 		}
 	}
 
+	const handleReinitDb = async () => {
+		await reinitDb()
+		setEditingFrames(false)
+		setEditingFrameId(null)
+		setEditingTaskId(null)
+		setLoading(actions.db.RELOAD)
+	}
+
+	if (loading === actions.db.LOADING) {
+		return (
+			<React.Fragment>
+				<Title>Loading</Title>
+			</React.Fragment>
+		)
+	}
+
+	if (loading === actions.db.ERROR) {
+		return (
+			<React.Fragment>
+				<Title>There was an error loading the database</Title>
+			</React.Fragment>
+		)
+	}
+
 	return (
 		<React.Fragment>
 			<Header>
-				<EditFramesButton
-					onClick={() => {
-						setEditingFrames(!editingFrames)
-					}}
-				>
-					{editingFrames ? 'Stop editing' : 'Edit frames'}
-				</EditFramesButton>
-				{editingFrames && (
-					<AddButton
+				{frames.length === 0 && (
+					<EditFramesButton
 						onClick={() => {
-							handleAddFrame()
+							handleReinitDb()
 						}}
-					/>
+					>
+						Load defaults
+					</EditFramesButton>
 				)}
+				{frames.length > 0 && (
+					<EditFramesButton
+						onClick={() => {
+							setEditingFrames(!editingFrames)
+						}}
+					>
+						{editingFrames ? 'Stop editing' : 'Edit frames'}
+					</EditFramesButton>
+				)}
+				<AddButton
+					onClick={() => {
+						handleAddFrame()
+					}}
+				/>
 			</Header>
 			<DragDropContext onDragEnd={handleDragEvent}>
 				<Droppable droppableId='list' type='FRAME'>

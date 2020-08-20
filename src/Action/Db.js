@@ -1,5 +1,19 @@
 import db from 'Db'
 
+export const fetchAll = async (tables) => {
+	const data = {}
+
+	for (const table of tables) {
+		await fetchFromDb({ table: table.name, order: table.order }).then(
+			(response) => {
+				data[table.name] = response
+			},
+		)
+	}
+
+	return data
+}
+
 export const fetchFromDb = ({ table, order }) => {
 	if (order) {
 		return db.table(table).orderBy(order).toArray()
@@ -26,4 +40,8 @@ export const deleteFromDb = ({ table, id, filter }) => {
 	}
 
 	return db.table(table).delete(id)
+}
+
+export const reinitDb = () => {
+	return db.delete().then(() => db.open())
 }

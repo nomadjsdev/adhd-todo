@@ -18,3 +18,7 @@ export const EditFramesButton = styled.button`
 	padding: 5px 10px;
 	margin-bottom: 20px;
 `
+export const Title = styled.h2`
+	font-size: 2rem;
+	margin: 5px 10px 0 0;
+`
