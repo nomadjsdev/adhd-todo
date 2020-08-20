@@ -1,10 +1,12 @@
 import React from 'react'
 import { DragDropContext, Droppable } from 'react-beautiful-dnd'
 
-import db from 'Db'
+import { fetchFromDb, putInDb, updateDb, deleteFromDb } from 'Action/Db'
 
 import Frame from 'Component/Frame'
 import Task from 'Component/Task'
+
+import { defaultNewFrame, defaultNewTask } from 'Constants'
 
 import { AddButton } from 'Styles/Components'
 import { Header, EditFramesButton } from './App.styles'
@@ -26,30 +28,35 @@ const reorderArrayByIndex = (list, startIndex, endIndex) => {
 const App = () => {
 	const [frames, setFrames] = React.useState([])
 	React.useEffect(() => {
-		db.table('frames')
-			.orderBy('position')
-			.toArray()
-			.then((frames) => {
-				setFrames(frames)
+		fetchFromDb({ table: 'frames', order: 'position' })
+			.then((response) => {
+				setFrames(response)
+			})
+			.catch((error) => {
+				console.log(error)
 			})
 	}, [])
 
 	const [tasks, setTasks] = React.useState([])
 	React.useEffect(() => {
-		db.table('tasks')
-			.toArray()
-			.then((tasks) => {
-				setTasks(tasks)
+		fetchFromDb({ table: 'tasks' })
+			.then((response) => {
+				setTasks(response)
+			})
+
+			.catch((error) => {
+				console.log(error)
 			})
 	}, [])
 
 	const [taskOrder, setTaskOrder] = React.useState([])
 	React.useEffect(() => {
-		db.table('taskOrder')
-			.orderBy('frame')
-			.toArray()
-			.then((taskOrder) => {
-				setTaskOrder(taskOrder)
+		fetchFromDb({ table: 'taskOrder', order: 'frame' })
+			.then((response) => {
+				setTaskOrder(response)
+			})
+			.catch((error) => {
+				console.log(error)
 			})
 	}, [])
 
@@ -65,25 +72,26 @@ const App = () => {
 
 	const handleAddFrame = () => {
 		const position = frames.length + 1
-		const frame = {
-			title: 'New frame...',
-			timeEnd: null,
-			timeStart: null,
-			position,
-		}
+		const frame = { ...defaultNewFrame, position }
 
-		db.table('frames')
-			.put(frame)
+		putInDb({ table: 'frames', data: frame })
 			.then(() => {
 				setFrames((prevFrames) => [...prevFrames, frame])
-
-				db.table('taskOrder')
-					.add({ frame: frame.id, order: [] })
+				putInDb({
+					table: 'taskOrder',
+					data: { frame: frame.id, order: [] },
+				})
 					.then((id) => {
 						const newTaskOrder = Array.from(taskOrder)
 						newTaskOrder.push({ id, frame: frame.id, order: [] })
 						setTaskOrder(newTaskOrder)
 					})
+					.catch((error) => {
+						console.log(error)
+					})
+			})
+			.catch((error) => {
+				console.log(error)
 			})
 	}
 
@@ -103,8 +111,7 @@ const App = () => {
 			title = frameToEdit.title
 		}
 
-		db.table('frames')
-			.update(id, { title, timeStart, timeEnd })
+		updateDb({ table: 'frames', id, data: { title, timeStart, timeEnd } })
 			.then(() => {
 				const index = frames.findIndex((frame) => frame.id === id)
 				const newList = replaceInArrayByIndex(frames, index, {
@@ -116,57 +123,70 @@ const App = () => {
 				setFrames(newList)
 				setEditingFrameId(null)
 			})
+			.catch((error) => {
+				console.log(error)
+			})
 	}
 
 	const handleDeleteFrame = ({ id }) => {
-		db.table('frames')
-			.delete(id)
+		deleteFromDb({ table: 'frames', id })
 			.then(() => {
 				const newList = frames.filter((frame) => frame.id !== id)
 				setFrames(newList)
 			})
 			.then(() => {
-				db.table('taskOrder')
-					.where('frame')
-					.equals(id)
-					.delete()
+				deleteFromDb({ table: 'taskOrder', id, filter: 'frame' })
 					.then(() => {
 						const newTaskOrder = taskOrder.filter((entry) => entry.frame !== id)
 						setTaskOrder(newTaskOrder)
 					})
+					.catch((error) => {
+						console.log(error)
+					})
 			})
 			.then(() => {
-				db.table('tasks')
-					.where('frame')
-					.equals(id)
-					.delete()
+				deleteFromDb({ table: 'tasks', id, filter: 'frame' })
 					.then(() => {
 						const newList = tasks.filter((task) => task.frame !== id)
 						setTasks(newList)
 					})
+					.catch((error) => {
+						console.log(error)
+					})
+			})
+			.catch((error) => {
+				console.log(error)
 			})
 	}
 
-	const handleAddTask = (data) => {
-		const { title = 'New task...', frame, complete = false } = data
+	const handleAddTask = ({
+		title = defaultNewTask.title,
+		frame,
+		complete = defaultNewTask.complete,
+	}) => {
 		const task = { title, frame, complete }
 
-		db.table('tasks')
-			.add(task)
-			.then(() => {
+		putInDb({ table: 'tasks', data: task })
+			.then((id) => {
 				setTasks((prevTasks) => [...prevTasks, task])
-				setEditingTaskId(task.id)
+				setEditingTaskId(id)
 				const newTaskOrder = Array.from(taskOrder)
-				for (const entry of newTaskOrder) {
-					if (entry.frame === frame) {
-						entry.order.push(task.id)
-					}
-				}
-				db.table('taskOrder')
-					.bulkPut(newTaskOrder)
+				const taskOrderIndexToUpdate = newTaskOrder.findIndex(
+					(entry) => entry.frame === frame,
+				)
+
+				newTaskOrder[taskOrderIndexToUpdate].order.push(id)
+
+				putInDb({ table: 'taskOrder', data: newTaskOrder, isBulk: true })
 					.then(() => {
 						setTaskOrder(newTaskOrder)
 					})
+					.catch((error) => {
+						console.log(error)
+					})
+			})
+			.catch((error) => {
+				console.log(error)
 			})
 	}
 
@@ -190,8 +210,7 @@ const App = () => {
 			frame = taskToEdit.frame
 		}
 
-		db.table('tasks')
-			.update(id, { title, frame, complete })
+		updateDb({ table: 'tasks', id, data: { title, frame, complete } })
 			.then(() => {
 				const index = tasks.findIndex((task) => task.id === id)
 				const newList = replaceInArrayByIndex(tasks, index, {
@@ -203,26 +222,36 @@ const App = () => {
 				setTasks(newList)
 				setEditingTaskId(null)
 			})
+			.catch((error) => {
+				console.log(error)
+			})
 	}
 
-	const handleDeleteTask = ({ id }) => {
-		db.table('tasks')
-			.delete(id)
+	const handleDeleteTask = ({ id, frame }) => {
+		deleteFromDb({ table: 'tasks', id })
 			.then(() => {
 				const newTaskOrder = Array.from(taskOrder)
-				for (const entry of newTaskOrder) {
-					const taskIndex = entry.order.findIndex((taskId) => taskId === id)
-					if (taskIndex !== -1) {
-						entry.order.splice(taskIndex, 1)
-					}
-				}
-				db.table('taskOrder')
-					.bulkPut(newTaskOrder)
+				const taskOrderIndexToUpdate = newTaskOrder.findIndex(
+					(entry) => entry.frame === frame,
+				)
+				const taskIndexToDelete = newTaskOrder[
+					taskOrderIndexToUpdate
+				].order.findIndex((taskId) => taskId === id)
+
+				newTaskOrder[taskOrderIndexToUpdate].order.splice(taskIndexToDelete, 1)
+
+				putInDb({ table: 'taskOrder', data: newTaskOrder, isBulk: true })
 					.then(() => {
 						setTaskOrder(newTaskOrder)
 					})
+					.catch((error) => {
+						console.log(error)
+					})
 				const newList = tasks.filter((task) => task.id !== id)
 				setTasks(newList)
+			})
+			.catch((error) => {
+				console.log(error)
 			})
 	}
 
@@ -255,12 +284,12 @@ const App = () => {
 			setFrames(updatedPositions)
 
 			// Update database
-			db.table('frames')
-				.bulkPut(updatedPositions)
-				.catch((error) => {
+			putInDb({ table: 'frames', data: updatedPositions, isBulk: true }).catch(
+				(error) => {
 					setFrames(oldFrameOrder)
 					console.log(error)
-				})
+				},
+			)
 		}
 
 		if (event.type === 'TASK') {
@@ -318,10 +347,15 @@ const App = () => {
 			setTaskOrder(newOrderArray)
 
 			// Update database
-			db.table('taskOrder')
-				.bulkPut(newOrderArray)
+			putInDb({ table: 'taskOrder', data: newOrderArray, isBulk: true })
 				.then(() => {
-					db.table('tasks').update(id, { frame: destinationFrame })
+					updateDb({
+						table: 'tasks',
+						id,
+						data: { frame: destinationFrame },
+					}).catch((error) => {
+						console.log(error)
+					})
 				})
 				.catch((error) => {
 					setTaskOrder(oldOrderArray)

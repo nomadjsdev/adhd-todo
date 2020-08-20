@@ -90,7 +90,7 @@ const Task = ({ index, data, functions, editing }) => {
 									/>
 									<DeleteButton
 										onClick={() => {
-											handleDeleteTask({ id })
+											handleDeleteTask({ id, frame })
 										}}
 									/>
 								</React.Fragment>
