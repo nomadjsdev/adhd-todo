@@ -14,7 +14,7 @@ const GlobalStyle = createGlobalStyle`
     color: white;
     min-height: calc(100vh - 56px);
     margin: 8px;
-    padding: 20px 10px;
+    padding: 10px 10px;
     border-radius: 5px;
     font-family: sans-serif;
   }

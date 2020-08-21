@@ -8,6 +8,7 @@ import {
 	EditButton,
 	DeleteButton,
 	MoveHandle,
+	ButtonContainer,
 } from 'Styles/Components'
 import {
 	FrameContainer,
@@ -16,14 +17,12 @@ import {
 	Title,
 	EditTitle,
 	TimeSpan,
-	EditTimeSpan,
 	EditTime,
-	ButtonContainer,
 	TasksContainer,
 } from './Frames.styles'
 
 const Frame = ({ index, data, functions, editing, children }) => {
-	const { id, title, timeStart, timeEnd } = data
+	const { id, title, timeStart } = data
 	const {
 		handleAddTask,
 		setEditingFrameId,
@@ -34,7 +33,6 @@ const Frame = ({ index, data, functions, editing, children }) => {
 
 	const [editTitle, setEditTitle] = React.useState(title)
 	const [editTimeStart, setEditTimeStart] = React.useState(timeStart)
-	const [editTimeEnd, setEditTimeEnd] = React.useState(timeEnd)
 
 	const inputRef = React.useRef()
 	React.useEffect(() => {
@@ -61,23 +59,12 @@ const Frame = ({ index, data, functions, editing, children }) => {
 									onChange={(e) => setEditTitle(e.target.value)}
 								/>
 							)}
-							{!editingFrame && (
-								<TimeSpan>
-									{timeStart}
-									{timeEnd && ` - ${timeEnd}`}
-								</TimeSpan>
-							)}
+							{!editingFrame && <TimeSpan>{timeStart}</TimeSpan>}
 							{editingFrame && (
-								<EditTimeSpan>
-									<EditTime
-										value={editTimeStart}
-										onChange={(e) => setEditTimeStart(e.target.value)}
-									/>
-									<EditTime
-										value={editTimeEnd}
-										onChange={(e) => setEditTimeEnd(e.target.value)}
-									/>
-								</EditTimeSpan>
+								<EditTime
+									value={editTimeStart}
+									onChange={(e) => setEditTimeStart(e.target.value)}
+								/>
 							)}
 						</TextContainer>
 						<ButtonContainer>
@@ -111,7 +98,6 @@ const Frame = ({ index, data, functions, editing, children }) => {
 												id,
 												title: editTitle,
 												timeStart: editTimeStart,
-												timeEnd: editTimeEnd,
 											})
 										}}
 									/>

@@ -86,14 +86,10 @@ const App = () => {
 			})
 	}
 
-	const handleEditFrame = ({ id, title, timeStart, timeEnd }) => {
+	const handleEditFrame = ({ id, title, timeStart }) => {
 		const frameToEdit = frames.find((frame) => frame.id === id)
 
-		if (
-			frameToEdit.title === title &&
-			frameToEdit.timeStart === timeStart &&
-			frameToEdit.timeEnd === timeEnd
-		) {
+		if (frameToEdit.title === title && frameToEdit.timeStart === timeStart) {
 			setEditingFrameId(null)
 			return
 		}
@@ -102,14 +98,13 @@ const App = () => {
 			title = frameToEdit.title
 		}
 
-		updateDb({ table: 'frames', id, data: { title, timeStart, timeEnd } })
+		updateDb({ table: 'frames', id, data: { title, timeStart } })
 			.then(() => {
 				const index = frames.findIndex((frame) => frame.id === id)
 				const newList = replaceInArrayByIndex(frames, index, {
 					id,
 					title,
 					timeStart,
-					timeEnd,
 				})
 				setFrames(newList)
 				setEditingFrameId(null)
@@ -397,7 +392,7 @@ const App = () => {
 							setEditingFrames(!editingFrames)
 						}}
 					>
-						{editingFrames ? 'Stop editing' : 'Edit frames'}
+						{editingFrames ? 'Done' : 'Edit frames'}
 					</EditFramesButton>
 				)}
 				<AddButton
@@ -436,7 +431,7 @@ const App = () => {
 													{taskOrder
 														.filter((entry) => entry.frame === frame.id)
 														.map((item) => {
-															let returnArray = []
+															let taskList = []
 															for (const [
 																index,
 																taskId,
@@ -444,7 +439,7 @@ const App = () => {
 																const task = tasks.find(
 																	(task) => task.id === taskId,
 																)
-																returnArray.push(
+																taskList.push(
 																	<Task
 																		key={`task-${task.id}`}
 																		index={index}
@@ -462,7 +457,7 @@ const App = () => {
 																	/>,
 																)
 															}
-															return returnArray
+															return taskList
 														})}
 
 													{provided.placeholder}

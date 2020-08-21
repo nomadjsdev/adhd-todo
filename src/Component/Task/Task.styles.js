@@ -8,6 +8,14 @@ export const TaskContainer = styled.div`
 	justify-content: space-between;
 	margin: 10px 0;
 	cursor: default;
+
+	&:first-child {
+		margin-top: 0;
+	}
+
+	&:last-child {
+		margin-bottom: 0;
+	}
 `
 
 export const TitleContainer = styled.div`
@@ -35,28 +43,22 @@ export const Duplicate = styled(Button)`
 
 export const Title = styled.p`
 	width: 100%;
-	font-size: 1.5rem;
-	padding: 5px;
-	margin-left: 10px;
+	font-size: 1.2rem;
+	margin-left: 5px;
 	text-decoration: ${(props) => (props.complete ? 'line-through' : 'none')};
 `
 
 export const EditTitle = styled.input.attrs({ type: 'text' })`
-	background-color: ${Colors.grey};
+	background-color: ${Colors.greyLight};
 	color: ${Colors.white};
 	border: none;
-	border-bottom: 2px solid ${Colors.white};
+	min-width: 0;
 	width: 100%;
-	margin: 0 20px 0 12px;
-	padding-left: 3px;
-	font-size: 1.5rem;
+	margin-left: 3px;
+	font-size: 1.2rem;
+	padding-right: 5px;
 
 	&:focus {
 		outline: none;
 	}
-`
-
-export const ControlContainer = styled.div`
-	display: flex;
-	align-items: center;
 `

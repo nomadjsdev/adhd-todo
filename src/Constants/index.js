@@ -1,6 +1,5 @@
 export const defaultNewFrame = {
 	title: 'New frame...',
-	timeEnd: '',
 	timeStart: '',
 }
 

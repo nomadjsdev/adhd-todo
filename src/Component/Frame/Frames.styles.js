@@ -3,9 +3,8 @@ import styled from 'styled-components'
 import Colors from 'Styles/Colors'
 
 export const FrameContainer = styled.div`
-	margin-bottom: 20px;
-	border: 1px solid ${Colors.black};
-	border-radius: 5px;
+	outline: 1px solid ${Colors.black};
+	margin-bottom: 10px;
 `
 
 export const TitleContainer = styled.div`
@@ -17,24 +16,24 @@ export const TitleContainer = styled.div`
 
 export const TextContainer = styled.div`
 	display: flex;
-	align-items: baseline;
-	width: calc(100% - 92px);
 	justify-content: space-between;
+	width: 100%;
+	min-width: 0;
 `
 
 export const Title = styled.h2`
-	font-size: 2rem;
-	margin: 5px 10px 0 0;
+	align-self: center;
+	font-size: 1.2rem;
+	margin-left: 5px;
 `
 
 export const EditTitle = styled.input.attrs({ type: 'text' })`
 	background-color: ${Colors.grey};
 	color: ${Colors.white};
 	border: none;
-	border-bottom: 2px solid ${Colors.white};
-	margin: 0 20px 0 12px;
-	padding-left: 3px;
-	font-size: 1.5rem;
+	font-size: 1.2rem;
+	min-width: 0;
+	margin-left: 3px;
 
 	&:focus {
 		outline: none;
@@ -42,23 +41,14 @@ export const EditTitle = styled.input.attrs({ type: 'text' })`
 `
 
 export const TimeSpan = styled.span`
+	align-self: center;
 	font-size: 1.2rem;
 `
 
-export const EditTimeSpan = styled.div`
-	max-width: 100px;
-	margin-right: 10px;
-`
-
 export const EditTime = styled(EditTitle)`
-	margin: 0 5px;
-	max-width: 100px;
-`
-
-export const ButtonContainer = styled.div`
-	display: flex;
-	justify-content: flex-end;
-	width: 92px;
+	max-width: 45px;
+	padding: 0;
+	text-align: right;
 `
 
 export const TasksContainer = styled.div`

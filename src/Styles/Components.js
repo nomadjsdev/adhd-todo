@@ -3,16 +3,17 @@ import styled from 'styled-components'
 import Colors from './Colors'
 
 export const Button = styled.button`
-	width: 36px;
-	height: 36px;
-	border-radius: 50%;
-	border-style: solid;
-	color: ${Colors.white};
-	font-size: 1.4rem;
-	margin-left: 10px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	border-radius: 50%;
+	border-style: solid;
+	color: ${Colors.white};
+	font-size: 1.1rem;
+	min-width: 25px;
+	width: 25px;
+	min-height: 25px;
+	height: 25px;
 
 	&:after {
 		position: absolute;
@@ -24,10 +25,10 @@ export const Button = styled.button`
 `
 
 export const AddButton = styled(Button)`
-	border: 2px solid ${Colors.highlight};
-	background-color: ${Colors.highlight};
-	font-size: 1.9rem;
 	position: relative;
+	font-size: 1.9rem;
+	background-color: ${Colors.highlight};
+	border: 2px solid ${Colors.highlight};
 
 	&:after {
 		content: '+';
@@ -35,8 +36,8 @@ export const AddButton = styled(Button)`
 `
 
 export const SaveButton = styled(Button)`
-	border: 2px solid ${Colors.success};
 	background-color: ${Colors.success};
+	border: 2px solid ${Colors.success};
 
 	&:after {
 		content: '✓';
@@ -44,9 +45,8 @@ export const SaveButton = styled(Button)`
 `
 
 export const CancelButton = styled(Button)`
-	margin-left: 10px;
-	border: 2px solid ${Colors.danger};
 	background-color: ${Colors.danger};
+	border: 2px solid ${Colors.danger};
 
 	&:after {
 		content: '×';
@@ -54,8 +54,8 @@ export const CancelButton = styled(Button)`
 `
 
 export const EditButton = styled(Button)`
-	border: 2px solid ${Colors.info};
 	background-color: ${Colors.info};
+	border: 2px solid ${Colors.info};
 	transform: scale(-1, 1);
 
 	&:after {
@@ -64,8 +64,8 @@ export const EditButton = styled(Button)`
 `
 
 export const DeleteButton = styled(Button)`
-	border: 2px solid ${Colors.danger};
 	background-color: ${Colors.danger};
+	border: 2px solid ${Colors.danger};
 
 	&:after {
 		content: '🗑';
@@ -73,16 +73,28 @@ export const DeleteButton = styled(Button)`
 `
 
 export const MoveHandle = styled.div`
-	width: 36px;
-	height: 36px;
-	border-radius: 5px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	border-radius: 5px;
 	background-color: ${Colors.info};
-	margin-right: 10px;
+	min-width: 25px;
+	width: 25px;
+	min-height: 25px;
+	height: 25px;
 
 	&:after {
 		content: '☰';
+	}
+`
+
+export const ButtonContainer = styled.div`
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	margin-left: 5px;
+
+	& button:last-child {
+		margin-left: 5px;
 	}
 `

@@ -6,6 +6,7 @@ import {
 	CancelButton,
 	EditButton,
 	DeleteButton,
+	ButtonContainer,
 } from 'Styles/Components'
 import {
 	TaskContainer,
@@ -14,7 +15,6 @@ import {
 	Duplicate,
 	Title,
 	EditTitle,
-	ControlContainer,
 } from './Task.styles'
 
 const Task = ({ index, data, functions, editing }) => {
@@ -79,7 +79,7 @@ const Task = ({ index, data, functions, editing }) => {
 						)}
 					</TitleContainer>
 					{!editingFrames && (
-						<ControlContainer>
+						<ButtonContainer>
 							{!editingTask && (
 								<React.Fragment>
 									<EditButton
@@ -111,7 +111,7 @@ const Task = ({ index, data, functions, editing }) => {
 									/>
 								</React.Fragment>
 							)}
-						</ControlContainer>
+						</ButtonContainer>
 					)}
 				</TaskContainer>
 			)}
